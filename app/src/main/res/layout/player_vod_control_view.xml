@@ -542,6 +542,28 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/tvBackButton"
+        android:layout_width="@dimen/vs_60"
+        android:layout_height="@dimen/vs_60"
+        android:layout_gravity="center|right"
+        android:layout_marginStart="@dimen/vs_50"
+        android:layout_marginLeft="@dimen/vs_50"
+        android:layout_marginEnd="@dimen/vs_6"
+        android:layout_marginRight="@dimen/vs_6"
+        android:background="@drawable/button_dialog_main"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/vs_40"
+            android:layout_height="@dimen/vs_40"
+            android:layout_gravity="center"
+            android:src="@drawable/v_back" />
+    </LinearLayout>
+    
     <ProgressBar
         android:layout_width="@dimen/vs_50"
         android:layout_height="@dimen/vs_50"

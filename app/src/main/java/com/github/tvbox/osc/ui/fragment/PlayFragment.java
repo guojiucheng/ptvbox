@@ -754,6 +754,7 @@ public class PlayFragment extends BaseLazyFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        EventBus.getDefault().unregister(this);
         if (mVideoView != null) {
             mVideoView.release();
             mVideoView = null;
@@ -1502,6 +1503,7 @@ public class PlayFragment extends BaseLazyFragment {
                         String cookie = CookieManager.getInstance().getCookie(url);
                         if(!TextUtils.isEmpty(cookie))headers.put("Cookie", " " + cookie);//携带cookie
                         playUrl(url, headers);
+                        mController.setUrlTitle("视频地址："+url);
                         stopLoadWebView(false);
                     }
                 }
@@ -1687,6 +1689,7 @@ public class PlayFragment extends BaseLazyFragment {
                         String cookie = CookieManager.getInstance().getCookie(url);
                         if(!TextUtils.isEmpty(cookie))webHeaders.put("Cookie", " " + cookie);//携带cookie
                         playUrl(url, webHeaders);
+                        mController.setUrlTitle("视频地址："+url);
                         stopLoadWebView(false);
                     }
                 }

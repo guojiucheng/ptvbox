@@ -6,6 +6,7 @@ import android.animation.IntEvaluator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Base64;
@@ -57,13 +58,12 @@ import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.LOG;
 import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.live.TxtSubscribe;
-import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
-import com.github.tvbox.osc.util.urlhttp.UrlHttpUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import org.apache.commons.lang3.StringUtils;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
+import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.Response;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
@@ -198,10 +198,11 @@ public class LivePlayActivity extends BaseActivity {
 
     @Override
     protected void init() {
+        hideSystemUI(false);
         context = this;
         epgStringAddress = Hawk.get(HawkConfig.EPG_URL,"");
         if(epgStringAddress == null || epgStringAddress.length()<5)
-            epgStringAddress = "http://epg.51zmt.top:8000/api/diyp/";
+            epgStringAddress = "https://epg.112114.xyz/";
 
         setLoadSir(findViewById(R.id.live_root));
         mVideoView = findViewById(R.id.mVideoView);
@@ -424,14 +425,9 @@ public class LivePlayActivity extends BaseActivity {
         }else {
             url= epgStringAddress + "?ch="+ URLEncoder.encode(epgTagName) + "&date=" + timeFormat.format(date);
         }
-        UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
-            public void onFailure(int i, String str) {
-                showEpg(date, new ArrayList());
-                showBottomEpg();
-            }
-
-            public void onResponse(String paramString) {
-
+        OkGo.<String>get(url).execute(new StringCallback() {
+            public void onSuccess(Response<String> response) {
+                String paramString = response.body();
                 ArrayList arrayList = new ArrayList();
 
                 Log.d("返回的EPG信息", paramString);
@@ -454,6 +450,10 @@ public class LivePlayActivity extends BaseActivity {
                 String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
                 if (!hsEpg.contains(savedEpgKey))
                     hsEpg.put(savedEpgKey, arrayList);
+                showBottomEpg();
+            }
+            public void onFailure(int i, String str) {
+                showEpg(date, new ArrayList());
                 showBottomEpg();
             }
         });
@@ -1509,6 +1509,11 @@ public class LivePlayActivity extends BaseActivity {
                         select = !Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false);
                         Hawk.put(HawkConfig.LIVE_CROSS_GROUP, select);
                         break;
+                    case 4:
+                        // takagen99 : Added Skip Password Option
+                        select = !Hawk.get(HawkConfig.LIVE_SKIP_PASSWORD, false);
+                        Hawk.put(HawkConfig.LIVE_SKIP_PASSWORD, select);
+                        break;
                 }
                 liveSettingItemAdapter.selectItem(position, select, false);
                 break;
@@ -1624,7 +1629,7 @@ public class LivePlayActivity extends BaseActivity {
         ArrayList<String> scaleItems = new ArrayList<>(Arrays.asList("默认", "16:9", "4:3", "填充", "原始", "裁剪"));
         ArrayList<String> playerDecoderItems = new ArrayList<>(Arrays.asList("系统", "ijk硬解", "ijk软解", "exo"));
         ArrayList<String> timeoutItems = new ArrayList<>(Arrays.asList("5s", "10s", "15s", "20s", "25s", "30s"));
-        ArrayList<String> personalSettingItems = new ArrayList<>(Arrays.asList("显示时间", "显示网速", "换台反转", "跨选分类"));
+        ArrayList<String> personalSettingItems = new ArrayList<>(Arrays.asList("显示时间", "显示网速", "换台反转", "跨选分类", "关闭密码"));
         itemsArrayList.add(sourceItems);
         itemsArrayList.add(scaleItems);
         itemsArrayList.add(playerDecoderItems);
@@ -1651,6 +1656,7 @@ public class LivePlayActivity extends BaseActivity {
         liveSettingGroupList.get(4).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(2).setItemSelected(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(3).setItemSelected(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false));
+        liveSettingGroupList.get(4).getLiveSettingItems().get(4).setItemSelected(Hawk.get(HawkConfig.LIVE_SKIP_PASSWORD, false));
     }
 
     private void loadCurrentSourceList() {
@@ -1763,11 +1769,15 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private boolean isPasswordConfirmed(int groupIndex) {
-        for (Integer confirmedNum : channelGroupPasswordConfirmed) {
-            if (confirmedNum == groupIndex)
-                return true;
+        if (Hawk.get(HawkConfig.LIVE_SKIP_PASSWORD, false)) {
+            return true;
+        } else {
+            for (Integer confirmedNum : channelGroupPasswordConfirmed) {
+                if (confirmedNum == groupIndex)
+                    return true;
+            }
+            return false;
         }
-        return false;
     }
 
     private ArrayList<LiveChannelItem> getLiveChannels(int groupIndex) {

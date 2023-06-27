@@ -195,6 +195,12 @@ public class HomeActivity extends BaseActivity {
 
         this.mGridView.setOnInBorderKeyEventListener(new TvRecyclerView.OnInBorderKeyEventListener() {
             public final boolean onInBorderKeyEvent(int direction, View view) {
+                if (direction == View.FOCUS_UP) {
+                    BaseLazyFragment baseLazyFragment = fragments.get(sortFocused);
+                    if ((baseLazyFragment instanceof GridFragment)) {// 弹出筛选
+                        ((GridFragment) baseLazyFragment).forceRefresh();
+                    }
+                }
                 if (direction != View.FOCUS_DOWN) {
                     return false;
                 }
@@ -601,7 +607,10 @@ public class HomeActivity extends BaseActivity {
     }
 
     void showSiteSwitch() {
-        List<SourceBean> sites = ApiConfig.get().getSourceBeanList();
+        List<SourceBean> sites = new ArrayList<>();
+        for (SourceBean sb : ApiConfig.get().getSourceBeanList()) {
+            if (sb.getHide() == 0) sites.add(sb);
+        }
         if (sites.size() > 0) {
             SelectDialog<SourceBean> dialog = new SelectDialog<>(HomeActivity.this);
             TvRecyclerView tvRecyclerView = dialog.findViewById(R.id.list);

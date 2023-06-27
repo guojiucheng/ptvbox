@@ -20,9 +20,11 @@ import androidx.recyclerview.widget.DiffUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
+import com.github.tvbox.osc.base.BaseActivity;
 import com.github.tvbox.osc.bean.IJKCode;
 import com.github.tvbox.osc.bean.ParseBean;
 import com.github.tvbox.osc.subtitle.widget.SimpleSubtitleView;
+import com.github.tvbox.osc.ui.activity.DetailActivity;
 import com.github.tvbox.osc.ui.adapter.ParseAdapter;
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
@@ -71,12 +73,16 @@ public class VodController extends BaseController {
                         mTopRoot2.setVisibility(VISIBLE);
                         mPlayTitle.setVisibility(GONE);
                         mNextBtn.requestFocus();
+                        if (((BaseActivity) mActivity).supportsTouch()) {
+                            mBack.setVisibility(VISIBLE);
+                        }
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
                         mBottomRoot.setVisibility(GONE);
                         mTopRoot1.setVisibility(GONE);
                         mTopRoot2.setVisibility(GONE);
+                        mBack.setVisibility(GONE);
                         break;
                     }
                     case 1004: { // 设置速度
@@ -131,6 +137,7 @@ public class VodController extends BaseController {
     TextView mAudioTrackBtn;
     public TextView mLandscapePortraitBtn;
 
+    LinearLayout mBack;
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 10000;//闲置多少毫秒秒关闭底栏  默认6秒
@@ -153,10 +160,12 @@ public class VodController extends BaseController {
             mHandler.postDelayed(this, 1000);
         }
     };
-
-
-
-
+    
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mHandler.removeCallbacks(myRunnable2);
+    }
 
     @Override
     protected void initView() {
@@ -194,6 +203,8 @@ public class VodController extends BaseController {
         mZimuBtn = findViewById(R.id.zimu_select);
         mAudioTrackBtn = findViewById(R.id.audio_track_select);
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait);
+        mBack = findViewById(R.id.tvBackButton);
+        mBack.setVisibility(INVISIBLE);
 
         initSubtitleInfo();
 
@@ -352,39 +363,6 @@ public class VodController extends BaseController {
             public void onClick(View view) {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
-                try {
-                    int playerType = mPlayerConfig.getInt("pl");
-                    ArrayList<Integer> exsitPlayerTypes = PlayerHelper.getExistPlayerTypes();
-                    int playerTypeIdx = 0;
-                    int playerTypeSize = exsitPlayerTypes.size();
-                    for(int i = 0; i<playerTypeSize; i++) {
-                        if (playerType == exsitPlayerTypes.get(i)) {
-                            if (i == playerTypeSize - 1) {
-                                playerTypeIdx = 0;
-                            } else {
-                                playerTypeIdx = i + 1;
-                            }
-                        }
-                    }
-                    playerType = exsitPlayerTypes.get(playerTypeIdx);
-                    mPlayerConfig.put("pl", playerType);
-                    updatePlayerCfgView();
-                    listener.updatePlayerCfg();
-                    listener.replay(false);
-                    hideBottom();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                mPlayerBtn.requestFocus();
-                mPlayerBtn.requestFocusFromTouch();
-            }
-        });
-
-        mPlayerBtn.setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                myHandle.removeCallbacks(myRunnable);
-                myHandle.postDelayed(myRunnable, myHandleSeconds);
                 FastClickCheckUtil.check(view);
                 try {
                     int playerType = mPlayerConfig.getInt("pl");
@@ -421,8 +399,7 @@ public class VodController extends BaseController {
 
                         @Override
                         public String getDisplay(Integer val) {
-                            Integer playerType = players.get(val);
-                            return PlayerHelper.getPlayerName(playerType);
+                            return PlayerHelper.getPlayerName(val);
                         }
                     }, new DiffUtil.ItemCallback<Integer>() {
                         @Override
@@ -434,12 +411,11 @@ public class VodController extends BaseController {
                         public boolean areContentsTheSame(@NonNull @NotNull Integer oldItem, @NonNull @NotNull Integer newItem) {
                             return oldItem.intValue() == newItem.intValue();
                         }
-                    }, renders, defaultPos);
+                    }, players, defaultPos);
                     dialog.show();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                return true;
             }
         });
         mPlayerIJKBtn.setOnClickListener(new OnClickListener() {
@@ -566,6 +542,23 @@ public class VodController extends BaseController {
                 hideBottom();
                 Toast.makeText(getContext(), "字幕已关闭", Toast.LENGTH_SHORT).show();
                 return true;
+            }
+        });
+        mBack.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean showPreview = Hawk.get(HawkConfig.SHOW_PREVIEW, true);
+                if (showPreview) {
+                    //mTopRoot.setVisibility(GONE);
+                    mBottomRoot.setVisibility(GONE);
+                    mTopRoot1.setVisibility(GONE);
+                    mTopRoot2.setVisibility(GONE);
+                    mBack.setVisibility(GONE);
+                    mHandler.removeCallbacks(myRunnable);
+                    ((DetailActivity) mActivity).toggleFullPreview();
+                } else {
+                    mActivity.finish();
+                }
             }
         });
         mAudioTrackBtn.setOnClickListener(new OnClickListener() {
