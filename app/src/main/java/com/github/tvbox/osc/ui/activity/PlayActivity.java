@@ -498,6 +498,7 @@ public class PlayActivity extends BaseActivity {
 
     void playUrl(String url, HashMap<String, String> headers) {
         LOG.i("playUrl:" + url);
+        mController.setUrlTitle("视频地址："+url);
         String finalUrl = url;
         runOnUiThread(new Runnable() {
             @Override
@@ -1463,7 +1464,7 @@ public class PlayActivity extends BaseActivity {
                         String cookie = CookieManager.getInstance().getCookie(url);
                         if(!TextUtils.isEmpty(cookie))headers.put("Cookie", " " + cookie);//携带cookie
                         playUrl(url, headers);
-                        mController.setUrlTitle("视频地址："+url);
+                        //mController.setUrlTitle("视频地址："+url);
                         stopLoadWebView(false);
                     }
                 }
@@ -1647,7 +1648,7 @@ public class PlayActivity extends BaseActivity {
                         String cookie = CookieManager.getInstance().getCookie(url);
                         if(!TextUtils.isEmpty(cookie))webHeaders.put("Cookie", " " + cookie);//携带cookie
                         playUrl(url, webHeaders);
-                        mController.setUrlTitle("视频地址："+url);
+                        //mController.setUrlTitle("视频地址："+url);
                         stopLoadWebView(false);
                     }
                 }
