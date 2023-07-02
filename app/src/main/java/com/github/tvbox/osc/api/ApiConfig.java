@@ -657,8 +657,9 @@ public class ApiConfig {
     public Spider getCSP(SourceBean sourceBean) {
         boolean js = sourceBean.getApi().endsWith(".js") || sourceBean.getApi().contains(".js?");
         //if (js) return jsLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt(), sourceBean.getJar());
+        String ext = sourceBean.getExt();
         if (js) {
-            return jsLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt(), sourceBean.getJar());
+            return jsLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), ext, sourceBean.getJar());
         } else if (ext.startsWith("asset://")) {
             String ext = sourceBean.getExt();
             try {
@@ -668,7 +669,7 @@ public class ApiConfig {
             }
             return jarLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), ext, sourceBean.getJar());
         }
-        return jarLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt(), sourceBean.getJar());
+        return jarLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), ext, sourceBean.getJar());
     }
 
     public Object[] proxyLocal(Map param) {
