@@ -661,7 +661,6 @@ public class ApiConfig {
         if (js) {
             return jsLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), ext, sourceBean.getJar());
         } else if (ext.startsWith("asset://")) {
-            String ext = sourceBean.getExt();
             try {
                 ext = readAssetsText(ext.replace("asset://",""));
             } catch (IOException e) {
