@@ -759,6 +759,7 @@ public class PlayFragment extends BaseLazyFragment {
             mVideoView = null;
         }
         stopLoadWebView(true);
+        Thunder.stop();
         stopParse();
     }
 

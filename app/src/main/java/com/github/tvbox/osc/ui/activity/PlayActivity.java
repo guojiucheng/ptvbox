@@ -733,6 +733,7 @@ public class PlayActivity extends BaseActivity {
             mVideoView = null;
         }
         stopLoadWebView(true);
+        Thunder.stop();
         stopParse();
     }
 
