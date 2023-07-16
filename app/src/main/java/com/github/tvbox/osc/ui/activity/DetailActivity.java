@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
@@ -958,11 +957,6 @@ public class DetailActivity extends BaseActivity {
         tvCollect.setFocusable(!fullWindows);
         tvQuickSearch.setFocusable(!fullWindows);
         toggleSubtitleTextSize();
-        if (fullWindows) {
-            hideSystemUI(false);
-        } else {
-            showSystemUI();
-        }
     }
 
     void toggleSubtitleTextSize() {

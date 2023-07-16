@@ -68,36 +68,20 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
     @Override
     protected void onResume() {
         super.onResume();
-        hideSystemUI(true);
+        hideSysBar();
         changeWallpaper(false);
     }
-    
-    public void hideSystemUI(boolean shownavbar) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            int uiVisibility = getWindow().getDecorView().getSystemUiVisibility();
-            uiVisibility |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-            uiVisibility |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
-            uiVisibility |= View.SYSTEM_UI_FLAG_FULLSCREEN;
-            uiVisibility |= View.SYSTEM_UI_FLAG_IMMERSIVE;
-            uiVisibility |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-            if (!shownavbar) {
-                uiVisibility |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-                uiVisibility |= View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-            }
-            getWindow().getDecorView().setSystemUiVisibility(uiVisibility);
-        }
-    }
 
-    public void showSystemUI() {
+    public void hideSysBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            int uiVisibility = getWindow().getDecorView().getSystemUiVisibility();
-            uiVisibility &= ~View.SYSTEM_UI_FLAG_LOW_PROFILE;
-            uiVisibility &= ~View.SYSTEM_UI_FLAG_FULLSCREEN;
-            uiVisibility &= ~View.SYSTEM_UI_FLAG_IMMERSIVE;
-            uiVisibility &= ~View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-            uiVisibility &= ~View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-            uiVisibility &= ~View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-            getWindow().getDecorView().setSystemUiVisibility(uiVisibility);
+            int uiOptions = getWindow().getDecorView().getSystemUiVisibility();
+            uiOptions |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            uiOptions |= View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+            uiOptions |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+            uiOptions |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+            uiOptions |= View.SYSTEM_UI_FLAG_FULLSCREEN;
+            uiOptions |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+            getWindow().getDecorView().setSystemUiVisibility(uiOptions);
         }
     }
 
@@ -193,11 +177,11 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
     public boolean isBaseOnWidth() {
         return !(screenRatio >= 4.0f);
     }
-
+    
     public boolean supportsTouch() {
         return getPackageManager().hasSystemFeature("android.hardware.touchscreen");
     }
-    
+
     protected static BitmapDrawable globalWp = null;
 
     public void changeWallpaper(boolean force) {

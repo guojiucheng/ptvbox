@@ -361,6 +361,8 @@ public class SearchActivity extends BaseActivity {
         }
         // 加载热词
         OkGo.<String>get("https://node.video.qq.com/x/api/hot_search")
+//        OkGo.<String>get("https://api.web.360kan.com/v1/rank")
+//                .params("cat", "1")
                 .params("channdlId", "0")
                 .params("_", System.currentTimeMillis())
                 .execute(new AbsCallback<String>() {

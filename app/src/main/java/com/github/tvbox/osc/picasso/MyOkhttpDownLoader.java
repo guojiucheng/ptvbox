@@ -22,6 +22,9 @@ import androidx.annotation.VisibleForTesting;
 import com.squareup.picasso.Downloader;
 
 import java.io.IOException;
+import java.util.Iterator;
+
+import org.json.JSONObject;
 
 import okhttp3.Cache;
 import okhttp3.Call;
@@ -63,6 +66,7 @@ public final class MyOkhttpDownLoader implements Downloader {
         String refer = null;
         String ua = null;
         String cookie = null;
+        String Header = null;
 
         //检查链接里面是否有自定义cookie
         String[] cookieUrl = url.split("@Cookie=");
@@ -96,6 +100,12 @@ public final class MyOkhttpDownLoader implements Downloader {
                 url = url.split("@User-Agent=")[0];
             }
         }
+        String[] hash = url.split("@Headers=");
+        if (hash.length > 1) {
+            url = url.split("@Headers=")[0];
+            Header = url.split("@Headers=")[1];
+        }
+        
         Request.Builder mRequestBuilder = new Request.Builder().url(url);
 
         if (!TextUtils.isEmpty(cookie)) {
@@ -111,6 +121,15 @@ public final class MyOkhttpDownLoader implements Downloader {
             if (!TextUtils.isEmpty(refer)) {
                 mRequestBuilder.addHeader("referer", refer);
             }
+        }
+        if (!TextUtils.isEmpty(Header)) {
+            JSONObject jsonInfo = new JSONObject(Header);
+    		Iterator<String> keys = jsonInfo.keys();
+    		while (keys.hasNext()) {
+    			String key = keys.next();
+    			String val = jsonInfo.optString(key);
+    			mRequestBuilder.addHeader(key,val);
+    		}
         }
         return client.newCall(mRequestBuilder.build()).execute();
     }

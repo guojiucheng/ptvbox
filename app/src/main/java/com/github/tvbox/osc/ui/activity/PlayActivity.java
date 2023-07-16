@@ -148,7 +148,6 @@ public class PlayActivity extends BaseActivity {
     }
 
     private void initView() {
-        hideSystemUI(false);
         mHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(@NonNull Message msg) {
@@ -498,6 +497,9 @@ public class PlayActivity extends BaseActivity {
 
     void playUrl(String url, HashMap<String, String> headers) {
         LOG.i("playUrl:" + url);
+        if(autoRetryCount>1 && url.contains(".m3u8")){
+            url="http://home.jundie.top:666/unBom.php?m3u8="+url;//尝试去bom头再次播放
+        }
         String finalUrl = url;
         runOnUiThread(new Runnable() {
             @Override
@@ -747,8 +749,14 @@ public class PlayActivity extends BaseActivity {
             hasNext = mVodInfo.playIndex + 1 < mVodInfo.seriesMap.get(mVodInfo.playFlag).size();
         }
         if (!hasNext) {
-            Toast.makeText(this, "已经是最后一集了!", Toast.LENGTH_SHORT).show();
-            return;
+            if(isProgress && mVodInfo!=null){
+                mVodInfo.playIndex=0;
+                Toast.makeText(this, "已经是最后一集了!", Toast.LENGTH_SHORT).show();
+                return;
+            }else {
+                Toast.makeText(this, "已经是最后一集了!", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }else {
             mVodInfo.playIndex++;
         }
@@ -777,7 +785,7 @@ public class PlayActivity extends BaseActivity {
             autoRetryFromLoadFoundVideoUrls();
             return true;
         }
-        if (autoRetryCount < 2) {
+        if (autoRetryCount < 1) {
             autoRetryCount++;
             play(false);
             return true;
@@ -1100,7 +1108,6 @@ public class PlayActivity extends BaseActivity {
                 public void run() {
                     JSONObject rs = ApiConfig.get().jsonExtMix(parseFlag + "111", pb.getUrl(), finalExtendName, jxs, webUrl);
                     if (rs == null || !rs.has("url") || rs.optString("url").isEmpty()) {
-//                        errorWithRetry("解析错误", false);
                         setTip("解析错误", false, true);
                     } else {
                         if (rs.has("parse") && rs.optInt("parse", 0) == 1) {
