@@ -123,13 +123,17 @@ public final class MyOkhttpDownLoader implements Downloader {
             }
         }
         if (!TextUtils.isEmpty(Header)) {
+          try {
             JSONObject jsonInfo = new JSONObject(Header);
-    		Iterator<String> keys = jsonInfo.keys();
-    		while (keys.hasNext()) {
-    			String key = keys.next();
-    			String val = jsonInfo.optString(key);
-    			mRequestBuilder.addHeader(key,val);
-    		}
+        		Iterator<String> keys = jsonInfo.keys();
+        		while (keys.hasNext()) {
+        			String key = keys.next();
+        			String val = jsonInfo.optString(key);
+        			mRequestBuilder.addHeader(key,val);
+        		}
+      		} catch (Throwable th) {
+            th.printStackTrace();
+          }
         }
         return client.newCall(mRequestBuilder.build()).execute();
     }
