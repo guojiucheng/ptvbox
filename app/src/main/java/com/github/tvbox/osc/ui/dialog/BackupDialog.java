@@ -16,7 +16,7 @@ import com.github.tvbox.osc.data.AppDataManager;
 import com.github.tvbox.osc.ui.adapter.BackupAdapter;
 import com.github.tvbox.osc.util.FileUtils;
 import com.hjq.permissions.OnPermissionCallback;
-import import com.github.tvbox.osc.util.DefaultConfig;
+import com.github.tvbox.osc.util.DefaultConfig;
 import com.hjq.permissions.XXPermissions;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 
