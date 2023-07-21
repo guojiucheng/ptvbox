@@ -48,6 +48,7 @@ import com.github.tvbox.osc.util.LOG;
 import com.github.tvbox.osc.util.MD5;
 import com.github.tvbox.osc.util.SearchHelper;
 import com.github.tvbox.osc.util.SubtitleHelper;
+import com.github.tvbox.osc.util.thunder.Jianpian;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -894,6 +895,7 @@ public class DetailActivity extends BaseActivity {
         } catch (Throwable th) {
             th.printStackTrace();
         }
+        Jianpian.finish();
         OkGo.getInstance().cancelTag("fenci");
         OkGo.getInstance().cancelTag("detail");
         OkGo.getInstance().cancelTag("quick_search");
