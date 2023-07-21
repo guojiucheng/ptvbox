@@ -761,6 +761,7 @@ public class PlayFragment extends BaseLazyFragment {
         }
         stopLoadWebView(true);
         Thunder.stop(true);
+        Jianpian.finish();
         stopParse();
     }
 

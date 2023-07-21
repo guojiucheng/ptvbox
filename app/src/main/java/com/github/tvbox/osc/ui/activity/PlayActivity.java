@@ -735,6 +735,7 @@ public class PlayActivity extends BaseActivity {
         }
         stopLoadWebView(true);
         Thunder.stop(false);
+        Jianpian.finish();
         stopParse();
     }
 
