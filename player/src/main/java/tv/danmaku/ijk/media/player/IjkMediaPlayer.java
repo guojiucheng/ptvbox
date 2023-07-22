@@ -189,12 +189,12 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
                     libLoader = sLocalLibLoader;
 
                 try {
-                    libLoader.loadLibrary("ffmpeg");
+                    libLoader.loadLibrary("ijkffmpeg");
                     libLoader.loadLibrary("ijksdl");
                 } catch (Throwable throwable) {
 
                 }
-                libLoader.loadLibrary("ijkplayer");
+                libLoader.loadLibrary("player");
                 mIsLibLoaded = true;
 
             }
@@ -1052,13 +1052,13 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
                             IjkTimedText text = new IjkTimedText(new Rect(0, 0, 1, 1), (String) msg.obj);
                             player.notifyOnTimedText(text);
                         } else if (msg.arg1 == 2) { // bitmap
+                            IjkTimedText text;
                             if (msg.arg2 > 0 && msg.obj instanceof int[] && ((int[]) msg.obj).length == msg.arg2) {
-                                IjkTimedText text = new IjkTimedText((int[]) msg.obj);
-                                player.notifyOnTimedText(text);
+                                text = new IjkTimedText((int[]) msg.obj);
                             } else {
-                                IjkTimedText text = new IjkTimedText(null, "");
-                                player.notifyOnTimedText(text);
+                                text = new IjkTimedText(null, "");
                             }
+                            player.notifyOnTimedText(text);
                         }
                     }
                     return;

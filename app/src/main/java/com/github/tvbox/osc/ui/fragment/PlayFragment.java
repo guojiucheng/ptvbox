@@ -848,7 +848,7 @@ public class PlayFragment extends BaseLazyFragment {
             CacheManager.delete(MD5.string2MD5(progressKey), 0);
             CacheManager.delete(MD5.string2MD5(subtitleCacheKey), 0);
         }
-        if(vs.url.startsWith("tvbox-xg:") || (Thunder.isFtp(vs.url) && vs.url.contains("gbl.114s"))){//荐片地址特殊判断
+        if(Jianpian.isJpUrl(vs.url)){//荐片地址特殊判断
             String jp_url= vs.url;
             mController.showParse(false);
             if(vs.url.startsWith("tvbox-xg:")){

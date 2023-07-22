@@ -23,15 +23,13 @@ public final class IjkTimedText {
 
     private Rect mTextBounds = null;
     private String mTextChars = null;
-    private int[] mBitmapData = null;
 
     public IjkTimedText(Rect bounds, String text) {
         mTextBounds = bounds;
         mTextChars = text;
     }
     
-    public IjkTimedText(int[] bitmap) {
-        this.mBitmapData = bitmap;
+    public IjkTimedText(int[] obj) {
     }
 
     public Rect getBounds() {
