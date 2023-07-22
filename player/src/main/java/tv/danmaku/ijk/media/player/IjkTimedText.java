@@ -24,19 +24,26 @@ public final class IjkTimedText {
     private Rect mTextBounds = null;
     private String mTextChars = null;
 
-    public IjkTimedText(Rect bounds, String text) {
-        mTextBounds = bounds;
-        mTextChars = text;
-    }
-    
-    public IjkTimedText(int[] obj) {
+    private int[] mBitmapData = null;
+ 
+     public IjkTimedText(Rect bounds, String text) {
+         mTextBounds = bounds;
+         mTextChars = text;
+     }
+ 
+    public IjkTimedText(int[] bitmap) {
+        this.mBitmapData = bitmap;
     }
 
-    public Rect getBounds() {
-        return mTextBounds;
+     public Rect getBounds() {
+         return mTextBounds;
+     }
+ 
+    public int[] getBitmapData() {
+        return mBitmapData;
     }
-    
-    public String getText() {
-        return mTextChars;
-    }
+
+     public String getText() {
+         return mTextChars;
+     }
 }
