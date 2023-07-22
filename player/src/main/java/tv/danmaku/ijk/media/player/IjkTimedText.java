@@ -36,10 +36,6 @@ public final class IjkTimedText {
         return mTextBounds;
     }
     
-    public int[] getBitmapData() {
-        return mBitmapData;
-    }
-
     public String getText() {
         return mTextChars;
     }
