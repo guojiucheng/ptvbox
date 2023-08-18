@@ -218,11 +218,15 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         if (Hawk.get(HawkConfig.HOME_REC, 0) == 1) {
             if (homeSourceRec != null) {
                 adapter.setNewData(homeSourceRec);
+                return;
             }
-            return;
         } else if (Hawk.get(HawkConfig.HOME_REC, 0) == 2) {
             return;
         }
+        setDouBanData(adapter);
+    }
+
+    private void setDouBanData(HomeHotVodAdapter adapter) {
         try {
             Calendar cal = Calendar.getInstance();
             int year = cal.get(Calendar.YEAR);
@@ -278,7 +282,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                 vod.name = obj.get("title").getAsString();
                 vod.note = obj.get("rate").getAsString();
                 if(!vod.note.isEmpty())vod.note+=" 分";
-                vod.pic = obj.get("cover").getAsString()+"@User-Agent=com.douban.frodo";
+                vod.pic = obj.get("cover").getAsString()+"@User-Agent="+ UA.randomOne()+"@Referer=https://www.douban.com/";
                 result.add(vod);
             }
         } catch (Throwable th) {
